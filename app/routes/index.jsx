@@ -43,6 +43,11 @@ export default function Index() {
               Crear un post
             </Link>
           </li>
+          <li>
+            <Link to='/posts/section'>
+              Categorias
+            </Link>
+          </li>
         </ul>
       </nav>
       {posts.map(post => (
