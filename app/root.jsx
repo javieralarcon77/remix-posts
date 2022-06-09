@@ -1,4 +1,5 @@
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -19,18 +20,26 @@ export const links = () => ([
   {
     rel: 'stylesheet',
     href: globalStyles
+  },
+  {
+    rel: 'stylesheet',
+    href: 'https://cdn.simplecss.org/simple.min.css'
   }
 ])
 
 function Layout() {
   return (
-    <>
+    <main>
       <header>
-        <h1>Remix Posts</h1>
+        <Link to="/">
+          <h4>Remix Posts</h4>
+        </Link>
       </header>
       <Outlet />
-      <footer>Copyrigth 2022</footer>
-    </>
+      <footer>
+        <small>Copyrigth 2022 - Create with Remix</small>
+      </footer>
+    </main>
   )
 }
 
