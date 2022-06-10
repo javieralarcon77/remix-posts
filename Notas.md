@@ -59,6 +59,13 @@ const form = await request.formData()
 const title = form.get('title')
 ```
 
+```jsx
+<Form />
+```
+si se usa el formulario como componente se puede usar use transition
+
+Para el manejo de errores podemos retornar un objeto con los errores del formulario y un estatus 400 y obtenerlos con el setActionData 
+
 # Manejo de errores
 
 Con la funcion ErrorBoundary podemos manejar los errores de
