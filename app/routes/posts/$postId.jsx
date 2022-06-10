@@ -1,12 +1,37 @@
-import { useParams } from '@remix-run/react'
+import { useLoaderData } from '@remix-run/react'
+import { db } from '../../services/db'
+
+export async function loader({ params }) {
+  const post = await db.post.findUnique({
+    where: {
+      id: params.postId
+    }
+  })
+  return { post }
+}
+
+export const ErrorBoundary = () => {
+  return (
+    <>
+      <h2>Post not Found</h2>
+      <p>El post que buscabas ya no existe</p>
+    </>
+  )
+}
+
+export const meta = ({ data }) => {
+  const { post } = data
+  return { title: `Remix Posts | ${post?.title || 'Not Found'}` }
+}
 
 export default function SinglePost() {
-  const params = useParams()
+  const { post } = useLoaderData()
 
   return (
     <>
-      <h2>Titulo {params.postId}</h2>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis facilis deleniti voluptate ratione ea fugiat quo, tenetur mollitia odio dolorum enim vero nemo voluptatibus harum, cum dolore maiores placeat impedit?</p>
+      <h1>{post.title}</h1>
+      <p>{post.body}</p>
+      <small>{post.createdAt}</small>
     </>
   )
 }
