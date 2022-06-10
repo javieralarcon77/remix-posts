@@ -17,9 +17,8 @@ export async function action({ request }) {
   const body = form.get('body')
   const data = { title, body }
 
-  await db.post.create({ data })
-
-  return redirect('/')
+  const post = await db.post.create({ data })
+  return redirect(`/posts/${post.id}`)
 }
 
 export const ErrorBoundary = ({ error }) => {
@@ -38,11 +37,11 @@ export default function CreatePost() {
       <Form method="POST">
         <div>
           <label htmlFor="title">Title</label><br/>
-          <input type="text" id="title" name="title" required/>
+          <input type="text" id="title" name="title" placeholder="Title" required/>
         </div>
         <div>
           <label htmlFor="body">Body</label><br/>
-          <textarea type="text" id="body" name="body" required/>
+          <textarea type="text" id="body" name="body" placeholder="Body" required/>
         </div>
         <button type="submit">Add new Post</button>
       </Form>

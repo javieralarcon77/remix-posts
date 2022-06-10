@@ -50,7 +50,9 @@ export default function Index() {
       </nav>
       {posts.map(post => (
         <div key={post.id}>
-          <h4>{post.title}</h4>
+          <Link to={`/posts/${post.id}`}>
+            <h4>{post.title}</h4>
+          </Link>
           <p>{post.body}</p>
         </div>
       ))}
