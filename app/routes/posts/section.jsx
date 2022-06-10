@@ -1,5 +1,9 @@
 import { Link, Outlet } from '@remix-run/react'
 
+export const meta = () => ({
+  title: 'Section Posts'
+})
+
 export default function IndexSection() {
   return (
     <div>
