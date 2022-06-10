@@ -1,8 +1,12 @@
 import { json, redirect } from '@remix-run/node'
-import { Form, useTransition } from '@remix-run/react'
+import { Form, useActionData, useTransition } from '@remix-run/react'
 
 import { db } from '../../services/db'
 import { requireUserId } from '../../services/session'
+
+const badRequest = data => {
+  return json(data, { status: 400 })
+}
 
 export async function loader({ request }) {
   await requireUserId(request)
@@ -16,12 +20,22 @@ export async function action({ request }) {
   const form = await request.formData()
   const title = form.get('title')
   const body = form.get('body')
-  const data = { title, body }
+  const fields = { title, body }
 
   // delay para probar el useTransition
   // await new Promise(resolve => setTimeout(resolve, 1000))
+  const fieldsErrors = {
+    title: title < 3 ? 'Title must be at least 3 characters' : null,
+    body: body < 10 ? 'Body must be at least 10 characters' : null
+  }
 
-  const post = await db.post.create({ data })
+  const hasErrors = Object.values(fieldsErrors).some(Boolean)
+
+  if (hasErrors) {
+    return badRequest({ fieldsErrors, fields })
+  }
+
+  const post = await db.post.create({ data: fields })
   return redirect(`/posts/${post.id}`)
 }
 
@@ -36,6 +50,8 @@ export const ErrorBoundary = ({ error }) => {
 
 export default function CreatePost() {
   const { state } = useTransition()
+  const actionData = useActionData() // recupera el objeto del bad request
+  const { fieldsErrors } = actionData ?? {}
 
   return (
     <>
@@ -44,10 +60,12 @@ export default function CreatePost() {
         <div>
           <label htmlFor="title">Title</label><br/>
           <input type="text" id="title" name="title" placeholder="Title"/>
+          {fieldsErrors?.title && <small style={{ color: 'red' }}>{fieldsErrors.title}</small>}
         </div>
         <div>
           <label htmlFor="body">Body</label><br/>
           <textarea type="text" id="body" name="body" placeholder="Body"/>
+          {fieldsErrors?.body && <small style={{ color: 'red' }}>{fieldsErrors.body}</small>}
         </div>
         <button type="submit" disabled={state === 'submitting'}>
           {state === 'submitting'
