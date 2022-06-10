@@ -19,7 +19,7 @@ export default function Index() {
   const { posts } = useLoaderData()
 
   return (
-    <div>
+    <>
       <h3>Recomended</h3>
       <ul>
         {posts.map(post => (
@@ -29,6 +29,6 @@ export default function Index() {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   )
 }
