@@ -1,15 +1,18 @@
 import { Link, useLoaderData } from '@remix-run/react'
 import { db } from '../services/db'
+import { getUserId } from '../services/session'
 
 /* se ejecuta en el servidor para recuperar la data */
-export const loader = async() => {
+export const loader = async({ request }) => {
   const posts = await db.post.findMany()
-  return { posts }
+  // obtenemos el user logueado en caso de no existir devuelve null
+  const user = await getUserId(request)
+  return { posts, user }
 }
 
 export default function Index() {
   /* se usa para obtener los datos que devuelve el loader */
-  const { posts } = useLoaderData()
+  const { posts, user } = useLoaderData()
 
   return (
     <div>
@@ -22,15 +25,27 @@ export default function Index() {
             </Link>
           </li>
           <li>
-            <Link to='/posts/create'>
+          {user
+            ? <Link to='/posts/create'>
               Crear un post
             </Link>
+            : <Link to='/auth/login'>
+              Login
+            </Link>
+            }
           </li>
           <li>
             <Link to='/posts/section'>
               Categorias
             </Link>
           </li>
+          {user &&
+            <li>
+              <Link to='/auth/logout'>
+                Logout
+              </Link>
+            </li>
+          }
         </ul>
       </nav>
       {posts.map(post => (
