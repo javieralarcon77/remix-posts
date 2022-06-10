@@ -1,5 +1,6 @@
 import { json, redirect } from '@remix-run/node'
-import { Form } from '@remix-run/react'
+import { Form, useTransition } from '@remix-run/react'
+
 import { db } from '../../services/db'
 import { requireUserId } from '../../services/session'
 
@@ -17,6 +18,9 @@ export async function action({ request }) {
   const body = form.get('body')
   const data = { title, body }
 
+  // delay para probar el useTransition
+  // await new Promise(resolve => setTimeout(resolve, 1000))
+
   const post = await db.post.create({ data })
   return redirect(`/posts/${post.id}`)
 }
@@ -31,19 +35,26 @@ export const ErrorBoundary = ({ error }) => {
 }
 
 export default function CreatePost() {
+  const { state } = useTransition()
+
   return (
     <>
       <h2>Create new post</h2>
       <Form method="POST">
         <div>
           <label htmlFor="title">Title</label><br/>
-          <input type="text" id="title" name="title" placeholder="Title" required/>
+          <input type="text" id="title" name="title" placeholder="Title"/>
         </div>
         <div>
           <label htmlFor="body">Body</label><br/>
-          <textarea type="text" id="body" name="body" placeholder="Body" required/>
+          <textarea type="text" id="body" name="body" placeholder="Body"/>
         </div>
-        <button type="submit">Add new Post</button>
+        <button type="submit" disabled={state === 'submitting'}>
+          {state === 'submitting'
+            ? 'Wait for it...'
+            : 'Add new Post'
+          }
+        </button>
       </Form>
     </>
   )
