@@ -1,7 +1,17 @@
-import { redirect } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
+import { Form } from '@remix-run/react'
 import { db } from '../../services/db'
+import { requireUserId } from '../../services/session'
+
+export async function loader({ request }) {
+  await requireUserId(request)
+  return json({})
+}
 
 export async function action({ request }) {
+  const userId = await requireUserId(request)
+  console.log(userId)
+
   const form = await request.formData()
   const title = form.get('title')
   const body = form.get('body')
@@ -25,7 +35,7 @@ export default function CreatePost() {
   return (
     <>
       <h2>Create new post</h2>
-      <form method="POST">
+      <Form method="POST">
         <div>
           <label htmlFor="title">Title</label><br/>
           <input type="text" id="title" name="title" required/>
@@ -35,7 +45,7 @@ export default function CreatePost() {
           <textarea type="text" id="body" name="body" required/>
         </div>
         <button type="submit">Add new Post</button>
-      </form>
+      </Form>
     </>
   )
 }
